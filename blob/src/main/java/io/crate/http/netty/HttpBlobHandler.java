@@ -221,7 +221,7 @@ public class HttpBlobHandler extends SimpleChannelUpstreamHandler implements
 
     private void sendResponse(HttpResponse response) {
         ChannelFuture cf = ctx.getChannel().write(response);
-        if (!HttpHeaders.isKeepAlive(currentMessage)) {
+        if (currentMessage != null && !HttpHeaders.isKeepAlive(currentMessage)) {
             cf.addListener(ChannelFutureListener.CLOSE);
         }
     }
@@ -258,7 +258,7 @@ public class HttpBlobHandler extends SimpleChannelUpstreamHandler implements
             body = ex.getMessage();
         } else {
             status = HttpResponseStatus.INTERNAL_SERVER_ERROR;
-            LOGGER.error("unhandled exception:", ex);
+            LOGGER.debug("unhandled exception:", ex);
         }
         simpleResponse(status, body);
     }
